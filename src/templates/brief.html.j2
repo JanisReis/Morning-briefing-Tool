@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="{{ language }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Morning Briefing — {{ date_display }}</title>
+<style>
+  :root {
+    --bg: #0f1115;
+    --panel: #171a21;
+    --border: #262b36;
+    --text: #e7e9ee;
+    --muted: #9aa3b2;
+    --accent: #5b8cff;
+    --up: #33c17a;
+    --down: #ef5b5b;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    line-height: 1.55;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 40px 20px 80px; }
+  .eyebrow {
+    color: var(--muted);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin-bottom: 6px;
+  }
+  h1 { font-size: 26px; margin: 0 0 28px; }
+  .index-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+  .index-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+  }
+  .index-card .name { font-size: 13px; color: var(--muted); margin-bottom: 4px; }
+  .index-card .value { font-size: 22px; font-weight: 600; }
+  .index-card .change { font-size: 14px; margin-top: 4px; }
+  .change.up { color: var(--up); }
+  .change.down { color: var(--down); }
+  .change.flat { color: var(--muted); }
+  .calendar { margin-bottom: 32px; }
+  .calendar h2 {
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: var(--accent);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+  }
+  .cal-row {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+  }
+  .cal-row:last-child { border-bottom: none; }
+  .cal-date {
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+    width: 78px;
+    flex-shrink: 0;
+  }
+  .cal-badge {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .03em;
+    padding: 2px 7px;
+    border-radius: 5px;
+    flex-shrink: 0;
+  }
+  .cal-badge.region-us { background: #3a2a12; color: #f0b94d; }
+  .cal-badge.region-eu { background: #12233a; color: #5b8cff; }
+  .cal-tag {
+    font-size: 11px;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 2px 7px;
+    flex-shrink: 0;
+  }
+  .cal-title { color: var(--text); }
+  .cal-empty { color: var(--muted); font-size: 14px; }
+  .brief h2 {
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: var(--accent);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+    margin-top: 32px;
+  }
+  .brief ul { padding-left: 20px; }
+  .brief li { margin-bottom: 6px; }
+  .footer {
+    margin-top: 48px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 12px;
+  }
+  .footer a { color: var(--accent); }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="eyebrow">Automated Morning Briefing · {{ date_display }}</div>
+    <h1>Global Markets &amp; Central Banks</h1>
+
+    <div class="index-grid">
+      {% for idx in indices %}
+      <div class="index-card">
+        <div class="name">{{ idx.name }} ({{ idx.ticker }})</div>
+        {% if idx.error %}
+          <div class="value">n/a</div>
+          <div class="change flat">{{ (idx.error[:60] + "…") if idx.error|length > 60 else idx.error }}</div>
+        {% else %}
+          <div class="value">{{ "%.2f"|format(idx.last_close) }}</div>
+          <div class="change {{ idx.direction }}">
+            {{ "%+.2f"|format(idx.change_pct) }}% ggü. Vortag ·
+            {{ "%+.2f"|format(idx.five_day_change_pct) }}% über 5 Tage
+          </div>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="calendar">
+      <h2>Diese {{ lookahead_days }} Tage wichtig</h2>
+      {% if calendar_events %}
+        {% for ev in calendar_events %}
+        <div class="cal-row">
+          <div class="cal-date">{{ ev.event_date.strftime("%d.%m.") }}</div>
+          <div class="cal-badge region-{{ ev.region|lower }}">{{ ev.region }}</div>
+          <div class="cal-tag">{{ ev.category }}</div>
+          <div class="cal-title">{{ ev.title }}</div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <div class="cal-empty">Keine anstehenden Termine im Betrachtungszeitraum gefunden.</div>
+      {% endif %}
+    </div>
+
+    <div class="brief">
+      {{ brief_html | safe }}
+    </div>
+
+    <div class="footer">
+      Automatisch generiert am {{ generated_at }} · Marktdaten: Yahoo Finance ·
+      Notenbank-Meldungen: EZB &amp; Federal Reserve RSS ·
+      <a href="index.html">Archiv aller Briefings</a>
+    </div>
+  </div>
+</body>
+</html>

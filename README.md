@@ -13,12 +13,6 @@ Archiv aller bisherigen Briefings: `output/index.html`
 
 ## Warum dieses Projekt
 
-Viele Stellenausschreibungen im Bereich Global Markets, Corporate Banking
-und Fixed Income verlangen inzwischen einen **nachweisbaren** Umgang mit KI
-zur Effizienzsteigerung im Arbeitsalltag — nicht nur die Aussage "ich nutze
-ChatGPT". Dieses Projekt ist genau so ein Nachweis: ein reales, alltägliches
-Analysten-Problem, gelöst mit einer selbst gebauten, produktiv laufenden
-Automatisierung.
 
 **Das Problem:** Auf einem Trading- oder Sales-Desk verschafft man sich
 morgens einen Überblick über die wichtigsten Indizes und Notenbank-News,

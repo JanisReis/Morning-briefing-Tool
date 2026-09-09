@@ -1,0 +1,62 @@
+name: Daily Morning Briefing
+
+on:
+  schedule:
+    - cron: "30 5 * * 1-5"  # Mo-Fr, 05:30 UTC
+  workflow_dispatch: {}       # erlaubt manuelles Ausloesen zum Testen
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: daily-briefing
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Generate briefing
+        env:
+          LLM_PROVIDER: ${{ vars.LLM_PROVIDER || 'groq' }}
+          LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+          LLM_MODEL: ${{ vars.LLM_MODEL }}
+          BRIEF_LANGUAGE: ${{ vars.BRIEF_LANGUAGE || 'de' }}
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+          CALENDAR_LOOKAHEAD_DAYS: ${{ vars.CALENDAR_LOOKAHEAD_DAYS || '14' }}
+        run: python main.py
+
+      - name: Commit generated briefing
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: daily morning briefing [skip ci]"
+          file_pattern: "output/**"
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: output
+
+  deploy-pages:
+    needs: generate
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

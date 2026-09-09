@@ -205,34 +205,6 @@ output/                         Generierte Briefings (Markdown + HTML)
 
 ---
 
-## Wie du dieses Projekt in Bewerbung & Interview einsetzt
-
-Für Anschreiben oder Interview eignet sich die STAR-Struktur:
-
-> **Situation:** Auf Trading-/Sales-Desks im Fixed-Income- und
-> Markets-Bereich beginnt der Tag mit einem manuellen Überblick über
-> Indizes und Notenbank-Kommunikation — ein wiederkehrender, zeitintensiver
-> Vorgang.
-> **Task:** Ich wollte verstehen, wie sich ein solcher Analyseprozess mit
-> generativer KI sinnvoll automatisieren lässt, ohne die fachliche
-> Kontrolle über die Inhalte zu verlieren.
-> **Action:** Ich habe eine Python-Pipeline gebaut, die Marktdaten (DAX,
-> S&P 500), offizielle EZB-/Fed-Feeds und einen Wirtschaftskalender
-> (US-Inflation/Arbeitsmarkt live über die FRED-API, EZB-/Fed-Sitzungs-
-> termine) automatisch abruft und über eine LLM-API zu einem strukturierten
-> Briefing verdichtet — inkl. Fehlerbehandlung, farblich getrennter
-> EU-/US-Darstellung und täglicher Automatisierung über GitHub Actions.
-> **Result:** Der manuelle Aufwand von ca. 30–40 Minuten täglich entfällt
-> vollständig; das Tool läuft seit [Datum] unbeaufsichtigt jeden
-> Werktagmorgen produktiv (siehe Commit-Historie).
-
-Zusätzlicher Punkt, der bei Banken gut ankommt: Das Fallback-Verhalten
-(regelbasierte Zusammenfassung statt Abbruch bei LLM-Fehlern) und die
-Prompt-Instruktion "erfinde keine Zahlen, die nicht in den Rohdaten stehen"
-zeigen ein Bewusstsein für Halluzinationsrisiken und Zuverlässigkeit —
-genau die Art von KI-Kompetenz, die im regulierten Bankenumfeld zählt,
-nicht nur technische Umsetzung.
-
 ---
 
 ## Mögliche Erweiterungen
@@ -249,9 +221,4 @@ nicht nur technische Umsetzung.
 - Weitere Frühindikatoren im Kalender: Ifo-Geschäftsklima, ZEW-Index,
   ISM/PMI-Daten
 
-## Hinweis
 
-Dieses Tool dient ausschließlich Demonstrations- und Lernzwecken und stellt
-**keine Anlageberatung** dar. Marktdaten stammen aus öffentlichen,
-zeitversetzten Quellen (Yahoo Finance) und sind nicht für den produktiven
-Handelseinsatz geeignet.
